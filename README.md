@@ -1,4 +1,4 @@
-# Vulkan Game Engine
+# nEngine Game Engine
 
 This is a  C++ learning project. It is based on [Little Vulkan Engine](https://github.com/blurrypiano/littleVulkanEngine).
 
