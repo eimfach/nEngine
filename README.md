@@ -24,6 +24,7 @@ I implemented:
 
 ## Requirements:
 
+- Install Vulkan SDK [SDK Installer](https://vulkan.lunarg.com/sdk/home)
 - Install C++ Compiler (Visual Studio on Windows)
 - Install CMake
 - Install Python and Pip
