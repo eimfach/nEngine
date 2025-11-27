@@ -2,9 +2,9 @@
 
 This is a  C++ learning project. It is based on [Little Vulkan Engine](https://github.com/blurrypiano/littleVulkanEngine).
 
-![Video](./screenshots/Recording_2025-11-26_175151.gif)
+![Video](screenshots/Recording_2025-11-26_175151.gif)
 
-![Screenshot](./screenshots/Screenshot_2025-11-26_173707.png)
+![Screenshot](screenshots/Screenshot_2025-11-26_173707.png)
 
 
 I implemented:
