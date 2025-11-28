@@ -86,6 +86,7 @@ def build(c, mode=Mode.RELEASE, forceninja=False):
     copy_assets(dist_path, "textures")
     copy_assets(dist_path, "shaders")
     copy_assets(dist_path, "models")
+    #TODO: Add compile step for shaders as custom command
 
 @task(help = {"mode": "Run the compiled build for given mode."})
 def run(c, mode=Mode.RELEASE):
@@ -106,7 +107,10 @@ def clean(c, mode=Mode.RELEASE):
     """
     Deletes the contents of the build directory
     """
-    c.run(f"rm -rf {BUILD_DIR}{os.path.sep}{mode}{os.path.sep}*")
+    mode_dir = create_mode_dir(BUILD_DIR, mode)
+    print(f"--- Deleting build folder {mode_dir}")
+    c.run(f"cmake -E rm -rf {mode_dir}")
+
 
 def copy_assets(dist_path, folder):
     shutil.copytree(f"{SOURCE_DIR}{os.path.sep}{folder}", f"{dist_path}{os.path.sep}{folder}", dirs_exist_ok=True)

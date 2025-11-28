@@ -7,7 +7,7 @@ project(nEngineProject CXX)
 # --------------------------------------------------------
 file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS 
     "src/*.cpp" 
-    "src/*.h"
+    "src/*.hpp"
 )
 
 # --------------------------------------------------------
@@ -102,3 +102,56 @@ if(MSVC)
 else()
     target_compile_options(nEngine PRIVATE -Wall -Wextra)
 endif()
+
+# --------------------------------------------------------
+# 7. ASSET MANAGEMENT (Visual Studio)
+# --------------------------------------------------------
+
+# A. DECLARE FILES (GLOBBING)
+# All files of the asset folders as reference
+file(GLOB_RECURSE ASSET_SHADERS  CONFIGURE_DEPENDS "shaders/*.*")
+file(GLOB_RECURSE ASSET_TEXTURES CONFIGURE_DEPENDS "textures/*.*")
+file(GLOB_RECURSE ASSET_MODELS   CONFIGURE_DEPENDS "models/*.*")
+
+# B. VISUAL STUDIO FILTERS
+# source_group produces "virtual folders" in Visual Studio (Filters)
+source_group("Assets\\Shaders"  FILES ${ASSET_SHADERS})
+source_group("Assets\\Textures" FILES ${ASSET_TEXTURES})
+source_group("Assets\\Models"   FILES ${ASSET_MODELS})
+
+# C. ADD THE FILES TO THE PROJECT
+target_sources(nEngine PRIVATE 
+    ${ASSET_SHADERS}
+    ${ASSET_TEXTURES}
+    ${ASSET_MODELS}
+)
+
+# Mark not for compiling
+set_source_files_properties(
+    ${ASSET_SHADERS} ${ASSET_TEXTURES} ${ASSET_MODELS}
+    PROPERTIES HEADER_FILE_ONLY TRUE
+)
+	
+# D. CREATE PHYSICAL COPIES BEFORE BUILDING
+foreach(ASSET_DIR "shaders" "textures" "models")
+    add_custom_command(
+        TARGET nEngine PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/${ASSET_DIR}"
+        "${CMAKE_CURRENT_SOURCE_DIR}/build/${ASSET_DIR}"
+        COMMENT "-- Copy ${ASSET_DIR} into build root...\n"
+    )
+	
+	add_custom_command(
+        TARGET nEngine POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/${ASSET_DIR}"
+        "$<TARGET_FILE_DIR:nEngine>/${ASSET_DIR}"
+        COMMENT "--- Copy ${ASSET_DIR} into build compliation folder (for releasing)..."
+    )
+endforeach()
+
+#TODO: Add compile step for shaders as custom command
+
+# Set nEngine to starting project in Visual Studio
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT nEngine)
