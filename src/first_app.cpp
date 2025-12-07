@@ -1,6 +1,6 @@
 #include "first_app.hpp"
 
-#include "buffer.hpp"
+#include "GLFW/glfw3.h"
 #include "camera.hpp"
 #include "movement.hpp"
 
@@ -11,13 +11,12 @@
 #include "aabb_render_system.hpp"
 
 #include "pointlight_render_system.hpp"
-#include "texture.hpp"
 #include "vertex_model.hpp"
 #include "assets.hpp"
 #include "entity_manager.hpp"
 #include "settings.hpp"
 #include "utils.hpp"
-#include "buffered_vector.hpp"
+#include <stdexcept>
 
 // libs
 #define GLM_FORCE_RADIANS
@@ -27,10 +26,7 @@
 //std
 #include <chrono>
 #include <ratio>
-#include <memory>
 #include <functional>
-#include <mutex>
-#include <thread>
 #include <filesystem>
 #include <optional>
 
@@ -38,23 +34,27 @@ namespace nEngine {
 
 	using namespace std::string_literals;
 
-	static std::mutex Mutex;
-
 	FirstApp::FirstApp() {
-		glfwSetWindowUserPointer(window.getGLFWwindow(), this);
-		glfwSetKeyCallback(window.getGLFWwindow(), keyCallbacks);
 		loadGameEntities();
 	}
 
 	FirstApp::~FirstApp() {}
 
 	void FirstApp::run() {
+		if (!window.getGLFWwindow()) {
+			throw std::runtime_error("GLFW Window failed to initialize");
+		}
+
+		glfwSetWindowUserPointer(window.getGLFWwindow(), this);
+		glfwSetFramebufferSizeCallback(window.getGLFWwindow(), windowRefreshCallback);
+		glfwSetKeyCallback(window.getGLFWwindow(), keyCallbacks);
+
 		Engine::MainRenderSystem main_render{ device };
 		Engine::SimpleRenderSystem simple_render{ device, renderer.getSwapChainRenderPass(),
 			main_render.getGobalSetLayout() };
 		Engine::PointLightRenderSystem point_light_render{ device, renderer.getSwapChainRenderPass(),
 			main_render.getGobalSetLayout() };
-		Engine::GuiRenderSystem gui_render_sys{ device, window.getGLFWwindow(), renderer.getSwapChainRenderPass() };
+		// Engine::GuiRenderSystem gui_render_sys{ device, window.getGLFWwindow(), renderer.getSwapChainRenderPass() };
 		Engine::LineRenderSystem line_render{ device, renderer.getSwapChainRenderPass(),
 			main_render.getGobalSetLayout() };
 		Engine::AABBRenderSystem aabb_render{ device, renderer.getSwapChainRenderPass(),
@@ -102,8 +102,6 @@ namespace nEngine {
 				ubo.viewMatrix = camera.getView();
 				ubo.inverseViewMatrix = camera.getInverseView();
 
-				std::lock_guard<std::mutex> lk(Mutex);
-
 				point_light_render.update(frame, ubo);
 				main_render.getUboBuffer(frame_index)->writeToBuffer(&ubo);
 				main_render.getUboBuffer(frame_index)->flush();
@@ -116,7 +114,7 @@ namespace nEngine {
 				point_light_render.render(frame);
 				line_render.render(frame);
 				//aabb_render.render(frame, ecsManager.getComponents<ECS::AABB>());
-				gui_render_sys.render(frame);
+				//gui_render_sys.render(frame);
 
 				renderer.endSwapChainRenderPass(cmd_buffer);
 				renderer.endFrame();
@@ -145,6 +143,11 @@ namespace nEngine {
 			std::cout << "Loading game: " << filename << " " << state.value_or("failed") << "\n";
 		}
 
+	}
+
+	void FirstApp::windowRefreshCallback(GLFWwindow* window, int width, int height) {
+		FirstApp* app = static_cast<FirstApp*>(glfwGetWindowUserPointer(window));
+		app->window.framebufferResizedCallback(width, height);
 	}
 
 	static ECS::Entity CreateStaticMeshEntity(ECS::Manager& manager, Engine::Device& device, std::string&& name, std::string&& modelpath, ECS::Transform transform) {

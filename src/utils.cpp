@@ -1,5 +1,6 @@
 #include "utils.hpp"
 #include "settings.hpp"
+#include <chrono>
 
 //lib
 #ifdef _WIN32

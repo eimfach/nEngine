@@ -1,7 +1,7 @@
 #pragma once
 
 #define GLFW_INCLUDE_VULKAN
-#include <glfw/glfw3.h>
+#include <GLFW/glfw3.h>
 
 #include <string>
 
@@ -35,7 +35,7 @@ namespace nEngine::Engine {
 		GLFWwindow* getGLFWwindow() { return window; }
 
 		void createWindowSurface(VkInstance instance, VkSurfaceKHR *surface);
-
+		void framebufferResizedCallback(int new_width, int new_height);
 	private:
 		GLFWwindow* window;
 		std::string windowName;
@@ -44,6 +44,5 @@ namespace nEngine::Engine {
 		bool framebufferResized;
 
 		void initWindow();
-		static void framebufferResizedCallback(GLFWwindow* window, int width, int height);
 	};
 }

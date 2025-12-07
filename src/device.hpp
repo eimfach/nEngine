@@ -3,7 +3,6 @@
 #include "window.hpp"
 
 // std lib headers
-#include <string>
 #include <vector>
 
 namespace nEngine::Engine {

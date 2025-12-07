@@ -100,7 +100,7 @@ target_link_libraries(nEngine PRIVATE
 if(MSVC)
     target_compile_options(nEngine PRIVATE /W4) # /W0 disables warnings, use /W4 for dev
 else()
-    target_compile_options(nEngine PRIVATE -Wall -Wextra)
+    target_compile_options(nEngine PRIVATE -w)
 endif()
 
 # --------------------------------------------------------
@@ -147,7 +147,7 @@ foreach(ASSET_DIR "shaders" "textures" "models")
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_CURRENT_SOURCE_DIR}/${ASSET_DIR}"
         "$<TARGET_FILE_DIR:nEngine>/${ASSET_DIR}"
-        COMMENT "--- Copy ${ASSET_DIR} into build compliation folder (for releasing)..."
+        COMMENT "--- Copy ${ASSET_DIR} into build compliation folder (for releasing)...\n"
     )
 endforeach()
 

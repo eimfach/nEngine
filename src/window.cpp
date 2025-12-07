@@ -13,13 +13,19 @@ namespace nEngine::Engine {
 	}
 
 	void Window::initWindow() {
-		glfwInit();
+		
+		int result = glfwInit();
+		if (result != GLFW_TRUE) {
+			
+		}
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+		
+		if (glfwPlatformSupported(GLFW_PLATFORM_WAYLAND)) {
+			glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_WAYLAND);	
+		}
 
 		window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
-		glfwSetWindowUserPointer(window, this);
-		glfwSetFramebufferSizeCallback(window, framebufferResizedCallback);
 	}
 
 	void Window::createWindowSurface(VkInstance instance, VkSurfaceKHR* surface) {
@@ -28,10 +34,9 @@ namespace nEngine::Engine {
 		}
 	}
 
-	void Window::framebufferResizedCallback(GLFWwindow* window, int width, int height) {
-		auto next_window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
-		next_window->framebufferResized = true;
-		next_window->width = width;
-		next_window->height = height;
+	void Window::framebufferResizedCallback(int new_width, int new_height) {
+		framebufferResized = true;
+		width = new_width;
+		height = new_height;
 	}
 }

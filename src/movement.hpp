@@ -5,6 +5,9 @@
 #include "entity_manager.hpp"
 #include "settings.hpp"
 
+//lib
+#include "GLFW/glfw3.h"
+
 namespace nEngine::Engine {
 	class MovementControl {
 	public:

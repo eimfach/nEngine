@@ -3,9 +3,7 @@
 #include "device.hpp"
 #include "window.hpp"
 #include "renderer.hpp"
-#include "vertex_base.hpp"
 #include "game_object.hpp"
-#include "descriptors.hpp"
 #include "entity_manager.hpp"
 #include "settings.hpp"
 
@@ -31,6 +29,7 @@ namespace nEngine {
 		void run();
 
 		static void keyCallbacks(GLFWwindow* window, int key, int scancode, int action, int mods);
+		static void windowRefreshCallback(GLFWwindow* window, int width, int height);
 
 	private:
 		Engine::Window window{ WIDTH, HEIGHT, "nEngine"};

@@ -83,9 +83,9 @@ namespace nEngine::Utils {
 		Timer(std::string ref);
 		~Timer();
 	private:
-		std::chrono::time_point<std::chrono::steady_clock> start;
-		std::chrono::time_point<std::chrono::steady_clock> end;
-		std::chrono::duration<float> duration;
-		std::string reference;
+		std::chrono::time_point<std::chrono::system_clock, std::chrono::duration<float>> start{};
+		std::chrono::time_point<std::chrono::system_clock, std::chrono::duration<float>> end{};
+		std::chrono::duration<float> duration{};
+		std::string reference{};
 	};
 }
