@@ -6,3 +6,6 @@
 build/
 .env*
 .cache/
+x64/
+.vs/
+*.vcxproj.user
